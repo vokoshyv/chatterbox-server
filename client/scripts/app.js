@@ -24,6 +24,7 @@ App.prototype.fetch = function(){
     //   "order" : '-createdAt'
     // },
     success: function (data) {
+      data = JSON.parse(data);
       for (var i = 0; i < data.results.length; i++){
         var key = (jsesc(data.results[i].username)
          + (data.results[i].updatedAt)) || null;
@@ -55,6 +56,9 @@ App.prototype.updateScreen = function(){
 
 App.prototype.displayMessages = function(){
   $(".message").remove();
+  // console.log('here');
+  // console.log(this);
+  // console.log(this.messages);
   for(var key in this.messages){
     if(this.messages[key].roomname === this.roomname){
       if(this.people[this.messages[key].username]){

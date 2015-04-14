@@ -65,11 +65,16 @@ var requestHandler = function(request, response) {
 
   if(request.url === "/classes/messages") {
 
+    if(request.method === "OPTIONS"){
+      response.writeHead(200, headers);
+      response.end();
+    }
     if(request.method === 'POST') {
       console.log(request);
       var currentMessageObj = '';
       request.on('data', function(chunk){
         currentMessageObj += chunk;
+        console.log(JSON.parse(chunk));
       });
       request.on('end', function(){
         messageStorage.results.push(JSON.parse(currentMessageObj));
@@ -78,11 +83,9 @@ var requestHandler = function(request, response) {
       response.end(JSON.stringify(messageStorage));
     }
     if(request.method === 'GET') {
+      console.log(JSON.stringify(messageStorage));
       response.writeHead(200, headers);
       response.end(JSON.stringify(messageStorage));
-    }
-    if(request.method === "OPTIONS"){
-      console.log('reached this point');
     }
   }
   else {
