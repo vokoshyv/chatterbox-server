@@ -20,9 +20,9 @@ App.prototype.fetch = function(){
     url: 'http://127.0.0.1:3000/classes/messages',
     type: 'GET',
     contentType: 'application/json',
-    data : {
-      "order" : '-createdAt'
-    },
+    // data : {
+    //   "order" : '-createdAt'
+    // },
     success: function (data) {
       for (var i = 0; i < data.results.length; i++){
         var key = (jsesc(data.results[i].username)

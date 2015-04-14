@@ -11,7 +11,6 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var util = require('util');
 var messageStorage = {
   "results": []
 };
@@ -41,50 +40,18 @@ var requestHandler = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
+  // var statusCode = 200;
 
   // See the note below about CORS headers.
+  var defaultCorsHeaders = {
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "access-control-allow-headers": "content-type, accept",
+    "access-control-max-age": 10 // Seconds.
+  };
+
   var headers = defaultCorsHeaders;
 
-
-
-  if(request.url === '/classes/messages') {
-    if(request.method === 'POST') {
-      var currentMessageObj = '';
-      request.on('data', function(chunk){
-        currentMessageObj += chunk;
-      });
-      request.on('end', function(){
-        messageStorage.results.push(JSON.parse(currentMessageObj));
-        console.log(messageStorage, 'msg storage');
-      })
-      // console.log(messageStorage);
-      response.writeHead(201, {'Content-Type':'application/JSON'});
-      // response.write("Message has been added!!!");
-      console.log(JSON.stringify(messageStorage));
-      response.end(JSON.stringify(messageStorage));
-    }
-    if(request.method === 'GET') {
-      if (messageStorage.results.length > 0) {
-        //console.log(messageStorage);
-
-        response.writeHead(200, {'Content-Type':'application/JSON'});
-        // response.write(JSON.stringify(messageStorage));
-        response.end(JSON.stringify(messageStorage));
-      }
-      response.writeHead(200, {'Content-Type':'application/JSON'});
-      // response.write(JSON.stringify(methodessageStorage));
-
-    }
-
-    // response.writeHead(200, {'Content-Type':'application/JSON'});
-    // response.write(JSON.stringify(result, 0, 4));
-    // response.write(function(){
-    //   var result = [];
-    //   return result;
-    // });
-    response.end();
-  }
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
@@ -93,7 +60,36 @@ var requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  // response.writeHead(statusCode, headers);
+
+
+  if(request.url === "/classes/messages") {
+
+    if(request.method === 'POST') {
+      console.log(request);
+      var currentMessageObj = '';
+      request.on('data', function(chunk){
+        currentMessageObj += chunk;
+      });
+      request.on('end', function(){
+        messageStorage.results.push(JSON.parse(currentMessageObj));
+      })
+      response.writeHead(201, headers);
+      response.end(JSON.stringify(messageStorage));
+    }
+    if(request.method === 'GET') {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(messageStorage));
+    }
+    if(request.method === "OPTIONS"){
+      console.log('reached this point');
+    }
+  }
+  else {
+    response.writeHead(404, headers);
+    response.end();
+  }
+
 
 
 
@@ -104,7 +100,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('hello world');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -116,11 +111,6 @@ var requestHandler = function(request, response) {
 //
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
-};
+
 
 module.exports.requestHandler = requestHandler;
