@@ -11,6 +11,16 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var util = require('util');
+var messageStorage = {
+  "results": []
+};
+
+// var messageObject = {
+//     'roomname' : this.roomname,
+//     'text' : message,
+//     'username' : this.username
+//   }
 
 
 var requestHandler = function(request, response) {
@@ -36,13 +46,39 @@ var requestHandler = function(request, response) {
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
+
+
   if(request.url === '/classes/messages') {
-    var result = {
-      "hasErrors": false,
-      "results" : [1, 2, 3, 4]
-    };
-    response.writeHead(200, {'Content-Type':'application/JSON'});
-    response.write(JSON.stringify(result));
+    if(request.method === 'POST') {
+      var currentMessageObj = '';
+      request.on('data', function(chunk){
+        currentMessageObj += chunk;
+      });
+      request.on('end', function(){
+        messageStorage.results.push(JSON.parse(currentMessageObj));
+        console.log(messageStorage, 'msg storage');
+      })
+      // console.log(messageStorage);
+      response.writeHead(201, {'Content-Type':'application/JSON'});
+      // response.write("Message has been added!!!");
+      console.log(JSON.stringify(messageStorage));
+      response.end(JSON.stringify(messageStorage));
+    }
+    if(request.method === 'GET') {
+      if (messageStorage.results.length > 0) {
+        //console.log(messageStorage);
+
+        response.writeHead(200, {'Content-Type':'application/JSON'});
+        // response.write(JSON.stringify(messageStorage));
+        response.end(JSON.stringify(messageStorage));
+      }
+      response.writeHead(200, {'Content-Type':'application/JSON'});
+      // response.write(JSON.stringify(methodessageStorage));
+
+    }
+
+    // response.writeHead(200, {'Content-Type':'application/JSON'});
+    // response.write(JSON.stringify(result, 0, 4));
     // response.write(function(){
     //   var result = [];
     //   return result;
