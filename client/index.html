@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>chatterbox</title>
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <!-- dependencies -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/jsesc/jsesc.js"></script>
+    <!-- your scripts -->
+    <script src="env/config.js"></script>
+    <script src="scripts/app.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <h1>chatterbox</h1>
+
+      <div class="newRoomBox">
+        <input type="text" id="roomInput">
+      </div>
+
+    <select id = "roomSelector">
+    </select>
+
+
+      <!-- Your HTML goes here! -->
+      <div id="center" class="column">
+        <h2>New Messages</h3>
+        <div class="messageInputBox">
+          <input type="text" id="messageInput">
+        </div>
+        <div class="messageContainer">
+          <a class="message"></a>
+        </div>
+      </div>
+    </div>
+
+    <div id="friendsCol">
+      <h1>Friends</h1>
+
+      <div class="friendsContainer" id="peopleContainer">
+      </div>
+
+    </div>
+
+
+    <script>
+    //Entering new messages
+    $('#messageInput').keydown(function (e){
+      if(e.keyCode == 13){
+         thisApp.send($('#messageInput').val());
+         $('#messageInput').val('');
+      }
+    })
+
+    //Entering new rooms
+    $('#roomInput').keydown(function (e){
+      if(e.keyCode == 13){
+         thisApp.createRoom($('#roomInput').val());
+         $('#roomInput').val('');
+      }
+    })
+
+
+      // var test = $(".messageInput").val();
+      var thisApp = new App();
+      var username = window.prompt("username","")
+      thisApp.init(username);
+      $(thisApp.updateRooms())
+
+      $('#roomSelector').on('change', function (e) {
+        thisApp.roomname=optionSelected = $("option:selected", this).text();
+      });
+
+    //Friending people
+
+
+
+    </script>
+  </body>
+</html>
