@@ -74,7 +74,6 @@ var requestHandler = function(request, response) {
       var currentMessageObj = '';
       request.on('data', function(chunk){
         currentMessageObj += chunk;
-        console.log(JSON.parse(chunk));
       });
       request.on('end', function(){
         messageStorage.results.push(JSON.parse(currentMessageObj));

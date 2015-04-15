@@ -16,6 +16,7 @@ App.prototype.fetch = function(){
   var instance = this;
   var messages = this.messages;
   var rooms = this.rooms;
+  console.log('fetch cycle');
   $.ajax({
     url: 'http://127.0.0.1:3000/classes/messages',
     type: 'GET',
@@ -60,15 +61,21 @@ App.prototype.displayMessages = function(){
   // console.log(this);
   // console.log(this.messages);
   for(var key in this.messages){
+    // console.log(typeof this.messages[key].roomname);
+    // console.log(typeof this.roomname);
+    console.log(this.messages);
     if(this.messages[key].roomname === this.roomname){
       if(this.people[this.messages[key].username]){
-        console.log('friend message');
+        // console.log('have arrived to append a message');
 
         $(".messageContainer").append('<a class=\"message friend\"> From:'+this.messages[key].username+'<br />'
           +'@: '+this.messages[key].updatedAt+'<br />'
           +this.messages[key].text+'</a>');
       }
       else{
+        // console.log('normal message');
+        // console.log(this.messages[key].username);
+        // console.log(this.messages[key].text);
         $(".messageContainer").append('<a class=\"message\"> From:'+this.messages[key].username+'<br />'
           +'@: '+this.messages[key].updatedAt+'<br />'
           +this.messages[key].text+'</a>');
@@ -113,10 +120,13 @@ App.prototype.updateRoomSelector = function(){
 
 App.prototype.send = function(message){
   //construct object to send as message
+  var currentDate = new Date();
+
   var messageObject = {
     'roomname' : this.roomname,
     'text' : message,
-    'username' : this.username
+    'username' : this.username,
+    'updatedAt' : currentDate
   }
   console.log(JSON.stringify(messageObject));
   $.ajax({
